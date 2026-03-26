@@ -1,0 +1,1 @@
+export $(grep -v '^#' /xx/pvd/dev.env | xargs)
