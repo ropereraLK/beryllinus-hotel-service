@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Document(collection = "bookings")
+//@Document(collection = "bookings")
 @Component
 public class Booking {
     @Id

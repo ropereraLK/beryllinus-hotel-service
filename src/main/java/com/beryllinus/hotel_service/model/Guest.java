@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
-@Document(collection = "users")
+//@Document(collection = "users")
 @Data
 public class Guest {
 
