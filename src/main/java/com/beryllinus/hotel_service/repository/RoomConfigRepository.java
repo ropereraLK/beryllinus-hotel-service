@@ -11,16 +11,16 @@ import java.util.List;
 
 @Repository
 public interface RoomConfigRepository extends JpaRepository<RoomConfig, Long> {
-//    @Query("""
-//                SELECT r
-//                FROM RoomConfig r
-//                WHERE r.id = :roomId
-//                AND r.isActive = true
-//                AND :targetDate BETWEEN r.startDate AND r.endDate
-//            """)
-//    List<RoomConfig> findRoomsConfigByRoomIdAndDateAndIsActive(
-//            @Param("roomId") Integer roomId,
-//            @Param("targetDate") LocalDate targetDate
-//    );
+    @Query("""
+                SELECT r
+                FROM RoomConfig r
+                WHERE r.room.id = :roomId
+                AND r.isActive = true
+                AND :targetDate BETWEEN r.startDate AND r.endDate
+            """)
+    List<RoomConfig> findRoomsConfigByRoomIdAndDateAndIsActive(
+            @Param("roomId") Integer roomId,
+            @Param("targetDate") LocalDate targetDate
+    );
 
 }
