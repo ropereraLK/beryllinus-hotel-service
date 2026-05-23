@@ -8,14 +8,13 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://HOST:5432/dbname
-    username: your_user
-    password: your_password
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
 
   jpa:
     hibernate:
-      ddl-auto: update
-
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true

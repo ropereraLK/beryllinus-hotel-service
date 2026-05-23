@@ -17,8 +17,8 @@ public class BookingController {
 
 
 
-    @GetMapping("/{bookingName}")
-    public ResponseEntity<String> testBooking(@PathVariable String bookingName) {
-        return ResponseEntity.ok(bookingService.createTestBooking(bookingName));
-    }
+//    @GetMapping("/{bookingName}")
+//    public ResponseEntity<String> testBooking(@PathVariable String bookingName) {
+//        return ResponseEntity.ok(bookingService.createTestBooking(bookingName));
+//    }
 }

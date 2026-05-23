@@ -23,15 +23,15 @@ public class OverlapDetectionService {
      */
     public void detectOverlappedDates(int roomId, LocalDate date) {
 
-        List<RoomConfig> roomConfigList = roomConfigRepository.findRoomsConfigByRoomIdAndDateAndIsActive(roomId, date);
-        //sort the arraylist my updatedAt
-        Optional<RoomConfig> roomConfig = roomConfigList.stream()
-                .max(Comparator.comparing(RoomConfig::getUpdatedAt));
-
-        if (roomConfig.isPresent()){
-            //Check for class activity
-
-        }else throw new RuntimeException();
+//        List<RoomConfig> roomConfigList = roomConfigRepository.findRoomsConfigByRoomIdAndDateAndIsActive(roomId, date);
+//        //sort the arraylist my updatedAt
+//        Optional<RoomConfig> roomConfig = roomConfigList.stream()
+//                .max(Comparator.comparing(RoomConfig::getUpdatedAt));
+//
+//        if (roomConfig.isPresent()){
+//            //Check for class activity
+//
+//        }else throw new RuntimeException();
 
     }
 }
