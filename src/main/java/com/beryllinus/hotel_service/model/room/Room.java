@@ -35,6 +35,7 @@ public class Room {
     private boolean isActive;
     private boolean isLocalBookingActive;
     private boolean isInternationalBookingActive;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

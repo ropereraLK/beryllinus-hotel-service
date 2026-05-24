@@ -12,7 +12,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -26,25 +28,31 @@ public class RoomClass {
     private int id;
 
     @Enumerated(value = EnumType.STRING)
-
     private RoomClassType roomClassType;
     private String description;
-
     private boolean isActive;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal priceLocal;
     @Enumerated(EnumType.STRING)
     private Currency priceLocalCurrency;
+    private boolean isLocalBookingActive;
+
     @Column(precision = 10, scale = 2)
     private BigDecimal priceInternational;
     @Enumerated(EnumType.STRING)
     private Currency priceInternationalCurrency;
-    private boolean isLocalBookingActive;
     private boolean isInternationalBookingActive;
+
+//    TODO: Removed the mapping considering performance issues
+//    @OneToMany(mappedBy = "roomClass", fetch = FetchType.LAZY)
+//    private List<RoomClassConfig> configs = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "roomClass", fetch = FetchType.LAZY)
+//    private List<Room> rooms = new ArrayList<>();
+
     @CreationTimestamp
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
