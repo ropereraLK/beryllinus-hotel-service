@@ -1,9 +1,10 @@
 package com.beryllinus.hotel_service.contoller;
 
 import com.beryllinus.hotel_service.dto.UserIdentification;
-import com.beryllinus.hotel_service.dto.response.PersonResponse;
+import com.beryllinus.hotel_service.dto.response.PersonDTO;
 import com.beryllinus.hotel_service.service.PersonService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +32,12 @@ public class PersonController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<PersonResponse> searchPerson(@RequestBody UserIdentification userIdentification) {
+    public ResponseEntity<PersonDTO> searchPerson(@RequestBody UserIdentification userIdentification) {
         return ResponseEntity.ok(personService.getPersonByUserIdentification(userIdentification));
     }
 
     @GetMapping
-    public ResponseEntity<Page<PersonResponse>> getPeople(
+    public ResponseEntity<Page<PersonDTO>> getPeople(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
@@ -53,6 +54,11 @@ public class PersonController {
             direction = "desc";
         }
         return ResponseEntity.ok(personService.getPeople(page, size, sortBy, direction));
+    }
+
+    @PostMapping
+    public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonDTO personDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(personService.createPerson(personDTO));
     }
 
     //TODO

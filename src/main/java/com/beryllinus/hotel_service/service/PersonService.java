@@ -1,7 +1,7 @@
 package com.beryllinus.hotel_service.service;
 
 import com.beryllinus.hotel_service.dto.UserIdentification;
-import com.beryllinus.hotel_service.dto.response.PersonResponse;
+import com.beryllinus.hotel_service.dto.response.PersonDTO;
 import com.beryllinus.hotel_service.enumuration.IdentificationType;
 import com.beryllinus.hotel_service.exceptions.PersonNotFoundException;
 import com.beryllinus.hotel_service.mapper.PersonMapper;
@@ -26,7 +26,7 @@ public class PersonService {
         this.personMapper = personMapper;
     }
 
-    public PersonResponse getPersonByUserIdentification(final UserIdentification userIdentification) {
+    public PersonDTO getPersonByUserIdentification(final UserIdentification userIdentification) {
         Optional<Person> person = switch (userIdentification.identificationType()) {
             case IdentificationType.PASSPORT ->
                     personRepository.findByCountryAndPassportIdentificationNumber(userIdentification.issuingCountryCode(), userIdentification.identificationDocNo());
@@ -45,7 +45,7 @@ public class PersonService {
     //        return null;
     //    }
 
-    public Page<PersonResponse> getPeople(int page, int size, String sortBy, String direction) {
+    public Page<PersonDTO> getPeople(int page, int size, String sortBy, String direction) {
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
@@ -56,5 +56,14 @@ public class PersonService {
 
         return personRepository.findAll(pageable)
                 .map(personMapper::toPersonResponse);
+    }
+
+    /***
+     * @param personDTO
+     * @return
+     */
+    public PersonDTO createPerson(PersonDTO personDTO) {
+        return personMapper.toPersonResponse(personRepository.save(personMapper.toPerson(personDTO)));
+
     }
 }

@@ -1,6 +1,6 @@
 package com.beryllinus.hotel_service.contoller;
 
-import com.beryllinus.hotel_service.dto.response.PersonResponse;
+import com.beryllinus.hotel_service.dto.response.PersonDTO;
 import com.beryllinus.hotel_service.service.PersonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +31,12 @@ class PersonControllerTest {
     @Test
     void shouldReturnPeoplePage() throws Exception {
 
-        PersonResponse response = new PersonResponse();
+        PersonDTO response = new PersonDTO();
 
         response.setFirstName("Rohan");
         response.setLastName("Perera");
 
-        Page<PersonResponse> page =
+        Page<PersonDTO> page =
                 new PageImpl<>(List.of(response));
 
         when(personService.getPeople(

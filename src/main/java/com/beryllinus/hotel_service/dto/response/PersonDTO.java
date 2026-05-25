@@ -3,7 +3,7 @@ package com.beryllinus.hotel_service.dto.response;
 import lombok.Data;
 
 @Data
-public class PersonResponse {
+public class PersonDTO {
     private String firstName;
     private String lastName;
 
