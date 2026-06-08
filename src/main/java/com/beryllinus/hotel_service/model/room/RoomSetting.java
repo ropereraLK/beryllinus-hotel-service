@@ -1,15 +1,17 @@
 package com.beryllinus.hotel_service.model.room;
 
 import com.beryllinus.hotel_service.enumuration.Currency;
+import jakarta.persistence.Entity;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@Entity
 public class RoomSetting {
-
-    private int roomId;
+    //id =  RoomSettingId
+    private int id;
     private int roomClassId;
     private LocalDate date;
     private boolean calculatedIsActive;
@@ -22,6 +24,10 @@ public class RoomSetting {
     private Currency calcPriceInternationalCurrency;
     private boolean calcIsInternationalBookingActive;
 
+    //Base Methods reflects values taken from RoomClass
+    //Then if RoomClassConfig has necessary records based on that above fields
+    //are updated
+
     private boolean baseIsActive;
     private boolean baseIsLocalBookingActive;
     private boolean baseIsInternationalBookingActive;
@@ -32,7 +38,7 @@ public class RoomSetting {
     private BigDecimal basePriceInternational;
     private Currency basePriceInternationalCurrency;
 
-    public RoomSetting(int roomId,
+    public RoomSetting(//int roomId,
                        int roomClassId,
                        LocalDate date,
                        boolean baseIsLocalBookingActive,
@@ -43,7 +49,7 @@ public class RoomSetting {
                        Currency basePriceInternationalCurrency
 
     ) {
-        this.roomId = roomId;
+//        this.roomId = roomId;
         this.roomClassId = roomClassId;
         this.date = date;
         //Only true records are selected
@@ -54,6 +60,18 @@ public class RoomSetting {
         this.basePriceLocalCurrency = basePriceLocalCurrency;
         this.basePriceInternational = basePriceInternational;
         this.basePriceInternationalCurrency = basePriceInternationalCurrency;
+
+
+    }
+
+    public RoomSetting(
+            int roomClassId
+
+
+    ) {
+
+        this.roomClassId = roomClassId;
+        this.date = LocalDate.now();
 
 
     }

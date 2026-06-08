@@ -34,14 +34,12 @@ public class RoomConfig {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    private boolean isLocalBookingActive;
-    private boolean isInternationalBookingActive;
     private boolean isActive;
     private LocalDate startDate;
     private LocalDate endDate;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 

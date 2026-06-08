@@ -1,5 +1,6 @@
 package com.beryllinus.hotel_service.service;
 
+import com.beryllinus.hotel_service.enumuration.Currency;
 import com.beryllinus.hotel_service.exceptions.RoomClassConfigNotFoundException;
 import com.beryllinus.hotel_service.exceptions.RoomConfigNotFoundException;
 import com.beryllinus.hotel_service.exceptions.RoomNotFoundException;
@@ -7,9 +8,13 @@ import com.beryllinus.hotel_service.model.room.*;
 import com.beryllinus.hotel_service.repository.RoomClassConfigRepository;
 import com.beryllinus.hotel_service.repository.RoomConfigRepository;
 import com.beryllinus.hotel_service.repository.RoomRepository;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -18,144 +23,132 @@ public class RoomSettingsService {
 
     private final RoomRepository roomRepository;
     private final RoomClassConfigRepository roomClassConfigRepository;
-    private final RoomConfigRepository roomConfigRepository;
+    private final RoomService roomService;
 
     public RoomSettingsService(RoomRepository roomRepository,
                                RoomClassConfigRepository roomClassConfigRepository,
-                               RoomConfigRepository roomConfigRepository) {
+                               RoomService roomService) {
 
         this.roomRepository = roomRepository;
         this.roomClassConfigRepository = roomClassConfigRepository;
-        this.roomConfigRepository = roomConfigRepository;
+        this.roomService = roomService;
     }
 
     /**
-     * @param roomId: 401
-     * @param date:   2015-01-28
+     * @param roomClass: roomClass
+     *                   By the repository layer only active roomClasses are fetched
      */
-    private RoomConfig getRoomConfigValidation(final int roomId, final LocalDate date) throws RoomConfigNotFoundException {
-        List<RoomConfig> roomConfigList = roomConfigRepository.findRoomsConfigByRoomIdAndDateAndIsActive(roomId, date);
-        if (roomConfigList.isEmpty()) {
-            throw new RoomConfigNotFoundException();
-        } else {
-            Optional<RoomConfig> roomConfig;
-            if (roomConfigList.size() > 1) {
-                //TODO: Corrections needed trigger
+    public RoomSetting validateRoomSettings(RoomClass roomClass, LocalDate date) throws RoomNotFoundException {
+        //Create the new RoomSetting
+        RoomSetting roomSetting = new RoomSetting(roomClass.getId());
 
-                return roomConfigList.stream()
-                        .max(Comparator.comparing(RoomConfig::getUpdatedAt))
-                        .orElseThrow(RoomConfigNotFoundException::new);
-            } else {
-                return roomConfigList.getFirst();
-            }
-        }
-    }
-
-    /**
-     * @param roomClassId: 401
-     * @param date:        2015-01-28
-     */
-    private RoomClassConfig getRoomClassConfigValidation(final int roomClassId, final LocalDate date) throws RoomClassConfigNotFoundException {
-        List<RoomClassConfig> roomClassConfigList = roomClassConfigRepository.findRoomsClassConfigByIdAndDateAndIsActive(roomClassId, date);
-        if (roomClassConfigList.isEmpty()) {
-            throw new RoomClassConfigNotFoundException();
-        } else {
-            Optional<RoomConfig> roomConfig;
-            if (roomClassConfigList.size() > 1) {
-                //TODO: Corrections needed trigger
-
-                return roomClassConfigList.stream()
-                        .max(Comparator.comparing(RoomClassConfig::getUpdatedAt))
-                        .orElseThrow(RoomClassConfigNotFoundException::new);
-            } else {
-                return roomClassConfigList.getFirst();
-            }
-        }
-    }
-
-    /**
-     * @param roomSetting: roomSetting
-     */
-    public RoomSetting validateRoomSettings(RoomSetting roomSetting) throws RoomNotFoundException {
-        //get relevantRoomConfig
-        RoomConfig roomConfig = null;
-        RoomClassConfig roomClassConfig = null;
+        //Validate RoomSetting with RoomClass
+        validateRoomSettingWithRoomClass(roomSetting, roomClass);
 
         try {
-            roomClassConfig = getRoomClassConfigValidation(roomSetting.getRoomClassId(), roomSetting.getDate());
+            validateRoomSettingWithRoomClassConfig(roomSetting, getRoomClasConfig(roomClass, date));
 
         } catch (RoomClassConfigNotFoundException e) {
             //No Room Config Found, Use Room Base Data
             //TODO: Log this
         }
 
-        try {
-            roomConfig = getRoomConfigValidation(roomSetting.getRoomId(), roomSetting.getDate());
-
-        } catch (RoomConfigNotFoundException e) {
-            //No Room Config Found, Use Room Base Data
-            //TODO: Log this
-        }
-        if (roomClassConfig == null && roomConfig == null) {
-            roomSetting.setCalculatedIsActive(roomSetting.isBaseIsActive());
-
-            roomSetting.setCalIsLocalBookingActive(roomSetting.isBaseIsLocalBookingActive());
-            roomSetting.setCalcPriceLocal(roomSetting.getBasePriceLocal());
-            roomSetting.setCalcPriceLocalCurrency(roomSetting.getBasePriceLocalCurrency());
-
-            roomSetting.setCalcIsInternationalBookingActive(roomSetting.isBaseIsInternationalBookingActive());
-            roomSetting.setCalcPriceInternational(roomSetting.getBasePriceInternational());
-            roomSetting.setCalcPriceInternationalCurrency(roomSetting.getBasePriceInternationalCurrency());
-
-        } else if (roomConfig != null && roomClassConfig == null) {
-
-            roomSetting.setCalculatedIsActive(roomConfig.isActive() && roomSetting.isBaseIsActive());
-
-            roomSetting.setCalIsLocalBookingActive(roomConfig.isLocalBookingActive()
-                    && roomSetting.isBaseIsLocalBookingActive());
-            roomSetting.setCalcPriceLocal(roomSetting.getBasePriceLocal());
-            roomSetting.setCalcPriceLocalCurrency(roomSetting.getBasePriceLocalCurrency());
-
-            roomSetting.setCalcIsInternationalBookingActive(roomConfig.isInternationalBookingActive()
-                    && roomSetting.isBaseIsInternationalBookingActive());
-            roomSetting.setCalcPriceInternational(roomSetting.getBasePriceInternational());
-            roomSetting.setCalcPriceInternationalCurrency(roomSetting.getBasePriceInternationalCurrency());
-
-        } else if (roomConfig == null) {
-            roomSetting.setCalculatedIsActive(roomClassConfig.isActive()
-                    && roomSetting.isBaseIsActive());
-
-            roomSetting.setCalIsLocalBookingActive(roomClassConfig.isLocalBookingActive()
-                    && roomSetting.isBaseIsLocalBookingActive());
-            roomSetting.setCalcPriceLocal(roomClassConfig.getPriceLocal());
-            roomSetting.setCalcPriceLocalCurrency(roomClassConfig.getPriceLocalCurrency());
-
-            roomSetting.setCalcIsInternationalBookingActive(roomClassConfig.isInternationalBookingActive()
-                    && roomSetting.isBaseIsInternationalBookingActive());
-            roomSetting.setCalcPriceInternational(roomClassConfig.getPriceInternational());
-            roomSetting.setCalcPriceInternationalCurrency(roomClassConfig.getPriceInternationalCurrency());
-
-        } else {
-            roomSetting.setCalculatedIsActive(roomConfig.isActive()
-                    && roomClassConfig.isActive()
-                    && roomSetting.isBaseIsActive());
-
-            roomSetting.setCalIsLocalBookingActive(roomClassConfig.isLocalBookingActive()
-                    && roomConfig.isLocalBookingActive()
-                    && roomSetting.isBaseIsLocalBookingActive());
-            roomSetting.setCalcPriceLocal(roomClassConfig.getPriceLocal());
-            roomSetting.setCalcPriceLocalCurrency(roomClassConfig.getPriceLocalCurrency());
-
-            roomSetting.setCalcIsInternationalBookingActive(roomClassConfig.isInternationalBookingActive()
-                    && roomConfig.isInternationalBookingActive()
-                    && roomSetting.isBaseIsInternationalBookingActive());
-            roomSetting.setCalcPriceInternational(roomClassConfig.getPriceInternational());
-            roomSetting.setCalcPriceInternationalCurrency(roomClassConfig.getPriceInternationalCurrency());
-        }
-
+        roomService.getAllActiveRooms();
 
         return roomSetting;
     }
+
+    private void validateRoomSettingWithRoomClass(RoomSetting roomSetting, RoomClass roomClass) {
+        roomSetting.setRoomClassId(roomClass.getId());
+        roomSetting.setBaseIsActive(roomClass.isActive());
+
+        roomSetting.setBaseIsLocalBookingActive(roomClass.isLocalBookingActive());
+        roomSetting.setBasePriceLocal(roomClass.getPriceLocal());
+        roomSetting.setBasePriceLocalCurrency(roomClass.getPriceLocalCurrency());
+
+
+        roomSetting.setBaseIsInternationalBookingActive(roomClass.isInternationalBookingActive());
+        roomSetting.setBasePriceInternationalCurrency(roomClass.getPriceInternationalCurrency());
+        roomSetting.setBasePriceInternational(roomClass.getPriceInternational());
+
+
+    }
+
+    private Optional<RoomClassConfig> getRoomClasConfig(RoomClass roomClass, LocalDate date) {
+        Optional<List<RoomClassConfig>> roomClassConfigList = roomClassConfigRepository.findRoomsClassConfigByIdAndDateAndIsActive(roomClass.getId(), date);
+        if (roomClassConfigList.isEmpty()) {
+            return Optional.empty();
+        } else if (roomClassConfigList.get().size() == 1) {
+            return Optional.of(roomClassConfigList.get().getFirst());
+        } else {
+            //TODO: Corrections needed trigger
+            return Optional.of(roomClassConfigList.get().stream()
+                    .max(Comparator.comparing(RoomClassConfig::getUpdatedAt))
+                    .orElseThrow(RoomClassConfigNotFoundException::new));
+        }
+    }
+
+    /**
+     * @param roomClassConfig: 401
+     * @param roomSetting:     2015-01-28
+     */
+    private void validateRoomSettingWithRoomClassConfig(RoomSetting roomSetting, Optional<RoomClassConfig> roomClassConfig) throws RoomClassConfigNotFoundException {
+
+        if (roomClassConfig.isEmpty()) {
+
+            //If RoomClassConfig Not Found update the Base values (value from RoomClass as default values)
+            roomSetting.setCalculatedIsActive(roomSetting.isBaseIsActive());
+
+            roomSetting.setCalcPriceLocal(roomSetting.getBasePriceLocal());
+            roomSetting.setCalcPriceLocalCurrency(roomSetting.getBasePriceLocalCurrency());
+            roomSetting.setCalIsLocalBookingActive(roomSetting.isBaseIsLocalBookingActive());
+
+            roomSetting.setCalcPriceInternational(roomSetting.getBasePriceInternational());
+            roomSetting.setCalcPriceInternationalCurrency(roomSetting.getBasePriceInternationalCurrency());
+            roomSetting.setCalcIsInternationalBookingActive(roomSetting.isBaseIsInternationalBookingActive());
+
+        } else {
+            roomSetting.setCalculatedIsActive(roomClassConfig.get().isActive());
+
+            roomSetting.setCalcPriceLocal(roomClassConfig.get().getPriceLocal());
+            roomSetting.setCalcPriceLocalCurrency(roomClassConfig.get().getPriceLocalCurrency());
+            roomSetting.setCalIsLocalBookingActive(roomClassConfig.get().isLocalBookingActive());
+
+            roomSetting.setCalcPriceInternational(roomClassConfig.get().getPriceInternational());
+            roomSetting.setCalcPriceInternationalCurrency(roomClassConfig.get().getPriceInternationalCurrency());
+            roomSetting.setCalcIsInternationalBookingActive(roomClassConfig.get().isInternationalBookingActive());
+        }
+
+
+    }
+
+
+
+
+
+//
+//    /**
+//     * @param roomClassId: 401
+//     * @param date:        2015-01-28
+//     */
+//    private RoomClassConfig getRoomClassConfigValidation(final int roomClassId, final LocalDate date) throws RoomClassConfigNotFoundException {
+//        Optional<List<RoomClassConfig>> roomClassConfigList = roomClassConfigRepository.findRoomsClassConfigByIdAndDateAndIsActive(roomClassId, date);
+//        if (roomClassConfigList.isEmpty()) {
+//            throw new RoomClassConfigNotFoundException();
+//        } else {
+//            Optional<RoomConfig> roomConfig;
+//            if (roomClassConfigList.get().size() > 1) {
+//                //TODO: Corrections needed trigger
+//
+//                return roomClassConfigList.get().stream()
+//                        .max(Comparator.comparing(RoomClassConfig::getUpdatedAt))
+//                        .orElseThrow(RoomClassConfigNotFoundException::new);
+//            } else {
+//                return roomClassConfigList.get().getFirst();
+//            }
+//        }
+//    }
+
 
     /**
      * @param date: date
@@ -176,7 +169,7 @@ public class RoomSettingsService {
                                             && r.isInternationalBookingActive();
 
                             return new RoomSetting(
-                                    r.getId(),
+
                                     r.getRoomClass().getId(),
                                     date,
                                     localBookingActive,

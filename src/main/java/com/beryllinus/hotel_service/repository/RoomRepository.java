@@ -14,4 +14,5 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     List<Room> findAllByIsActive(boolean isActive);
 
+
 }

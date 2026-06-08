@@ -40,12 +40,14 @@ public class RoomClass {
     private Currency priceInternationalCurrency;
     private boolean isInternationalBookingActive;
 
-//    TODO: Removed the mapping considering performance issues
-//    @OneToMany(mappedBy = "roomClass", fetch = FetchType.LAZY)
-//    private List<RoomClassConfig> configs = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "roomClass", fetch = FetchType.LAZY)
-//    private List<Room> rooms = new ArrayList<>();
+    /**
+     * This is a calculated field based on total number of Rooms available
+     * in the Room Class
+     * Eg: If 10 Rooms available for RoomClass 'STANDARD'
+     * This field is 10 and this will never be changed
+     * Always try to refer roomClassConfig availableRooms value
+     */
+    private int availableRooms;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

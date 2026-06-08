@@ -30,16 +30,28 @@ public class RoomClassConfig {
     private boolean isActive;
     private LocalDate startDate;
     private LocalDate endDate;
+
     @Column(precision = 10, scale = 2)
     private BigDecimal priceLocal;
     @Enumerated(EnumType.STRING)
     private Currency priceLocalCurrency;
     @Column(precision = 10, scale = 2)
+    private boolean isLocalBookingActive;
+
     private BigDecimal priceInternational;
     @Enumerated(EnumType.STRING)
     private Currency priceInternationalCurrency;
-    private boolean isLocalBookingActive;
     private boolean isInternationalBookingActive;
+
+    /**
+     * This is a calculated field based on total number of Rooms available
+     * in the Room Config
+     * Eg: If 10 Rooms available for RoomClass 'STANDARD'
+     * This field is 10 and this will never be changed
+     * Always try to refer roomClassConfig availableRooms value
+     */
+    private int availableRooms;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

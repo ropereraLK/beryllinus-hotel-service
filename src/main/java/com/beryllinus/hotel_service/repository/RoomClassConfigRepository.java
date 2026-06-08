@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RoomClassConfigRepository extends JpaRepository<RoomClassConfig, Integer> {
@@ -20,7 +21,7 @@ public interface RoomClassConfigRepository extends JpaRepository<RoomClassConfig
                 AND r.isActive = true
                 AND :targetDate BETWEEN r.startDate AND r.endDate
             """)
-    List<RoomClassConfig> findRoomsClassConfigByIdAndDateAndIsActive(
+    Optional<List<RoomClassConfig>> findRoomsClassConfigByIdAndDateAndIsActive(
             @Param("id") Integer roomClassId,
             @Param("targetDate") LocalDate targetDate
     );

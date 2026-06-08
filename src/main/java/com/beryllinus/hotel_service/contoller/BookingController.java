@@ -24,8 +24,8 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-
-@GetMapping
+    //TODO
+    @GetMapping
     public ResponseEntity<String> testBooking() {
 
         List<RoomConfig> roomConfigList = roomConfigRepository.findRoomsConfigByRoomIdAndDateAndIsActive(2, LocalDate.now().plusYears(1));
@@ -33,4 +33,6 @@ public class BookingController {
         return ResponseEntity.ok("Hi");
         //return ResponseEntity.ok(bookingService.createTestBooking(bookingName));
     }
+
+
 }
