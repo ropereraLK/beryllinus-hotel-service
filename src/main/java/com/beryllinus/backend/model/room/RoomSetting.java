@@ -10,6 +10,11 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"room_class_id", "date"})
+        }
+)
 public class RoomSetting {
 
     /**
@@ -22,7 +27,7 @@ public class RoomSetting {
     /**
      * Per RoomClass, Per Day one Setting file will be generated
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_class_id")
     private RoomClass roomClass;
 
@@ -69,9 +74,9 @@ public class RoomSetting {
      */
     private int availableRooms;
 
-    public RoomSetting(RoomClass roomClass) {
+    public RoomSetting(RoomClass roomClass, LocalDate date) {
         this.roomClass = roomClass;
-        this.date = LocalDate.now();
+        this.date = date;
     }
 
 }

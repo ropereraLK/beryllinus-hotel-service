@@ -16,12 +16,12 @@ public interface RoomClassConfigRepository extends JpaRepository<RoomClassConfig
     @Query("""
                 SELECT r
                 FROM RoomClassConfig r
-                WHERE r.id = :roomClassId
-                AND r.isActive = true
-                AND :targetDate BETWEEN r.startDate AND r.endDate
+                WHERE r.roomClass.id = :roomClassId
+                  AND r.isActive = true
+                  AND :targetDate BETWEEN r.startDate AND r.endDate
             """)
     Optional<List<RoomClassConfig>> findRoomsClassConfigByIdAndDateAndIsActive(
-            @Param("id") Integer roomClassId,
+            @Param("roomClassId") Integer roomClassId,
             @Param("targetDate") LocalDate targetDate
     );
 }
