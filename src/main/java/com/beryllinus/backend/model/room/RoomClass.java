@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,7 +20,10 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "room_class")
-public class RoomClass {
+public class RoomClass  implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

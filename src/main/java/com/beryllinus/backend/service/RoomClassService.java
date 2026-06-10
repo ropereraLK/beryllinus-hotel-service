@@ -1,6 +1,7 @@
 package com.beryllinus.backend.service;
 
 
+import com.beryllinus.backend.constants.CacheConstants;
 import com.beryllinus.backend.exceptions.RoomClassNotFoundException;
 import com.beryllinus.backend.model.room.RoomClass;
 import com.beryllinus.backend.enumuration.RoomClassType;
@@ -27,7 +28,7 @@ public class RoomClassService {
     /**
      * Get all active RoomClasses.
      */
-    @Cacheable("roomClasses")
+    @Cacheable(CacheConstants.ROOM_CLASSES)
     public List<RoomClass> getAllActiveRoomClasses() {
         LOGGER.info("Fetching data from database");
         return roomClassRepository.findAllByIsActive(true);

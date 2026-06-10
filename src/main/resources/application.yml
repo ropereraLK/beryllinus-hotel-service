@@ -7,7 +7,8 @@ logging:
     org.springframework.boot.autoconfigure.flyway: DEBUG
     root: INFO
     org.springframework.cache: TRACE
-    com.beryllinus.backend: DEBUG
+    com.beryllinus.backend: TRACE
+    org.springframework.data.redis: TRACE
 
 spring:
   datasource:
@@ -40,3 +41,7 @@ spring:
 booking:
   maxSearchDaysAhead: 364
   maxStayLength: 30
+
+cache:
+  defaultTtl: 5m
+  roomClassesTtl: 24h
