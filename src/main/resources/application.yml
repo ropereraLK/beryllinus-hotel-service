@@ -18,16 +18,18 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
     show-sql: true
 
     properties:
       hibernate:
         format_sql: true
+
   cache:
     type: redis
-  data: #For development only
+
+  data: # For development only
     redis:
       host: localhost
       port: 6379
@@ -37,6 +39,30 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+
+  # Kafka Configs
+  kafka:
+    bootstrap-servers: your-kafka-host.aivencloud.com:12345
+
+    producer:
+      acks: all
+      retries: 3
+
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+      properties:
+        enable.idempotence: true
+
+    properties:
+      security.protocol: SSL
+
+      ssl.truststore.location: classpath:client.truststore.jks
+      ssl.truststore.password: ${TRUSTSTORE_PASSWORD}
+
+      ssl.keystore.location: classpath:client.keystore.p12
+      ssl.keystore.password: ${KEYSTORE_PASSWORD}
+      ssl.keystore.type: PKCS12
 
 management:
   endpoints:
@@ -55,3 +81,9 @@ booking:
 cache:
   defaultTtl: 5m
   roomClassesTtl: 24h
+
+kafka:
+  topics:
+    booking: booking-events
+    payment: payment-events
+    inventory: inventory-events

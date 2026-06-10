@@ -13,7 +13,23 @@ import java.util.UUID;
 @Builder
 @Data
 @Entity
-@Table(name = "outbox_events")
+@Table(
+        name = "outbox_events",
+        indexes = {
+                @Index(
+                        name = "idx_outbox_published_created",
+                        columnList = "published, createdAt"
+                ),
+                @Index(
+                        name = "idx_outbox_aggregate",
+                        columnList = "aggregateType, aggregateId"
+                ),
+                @Index(
+                        name = "idx_outbox_publish_retry",
+                        columnList = "published, retryCount, createdAt"
+                )
+        }
+)
 public class OutboxEvent {
 
     @Id
@@ -35,8 +51,14 @@ public class OutboxEvent {
 
     private boolean published;
 
+    private OffsetDateTime publishedAt;
+
+    private int retryCount;
+
     @PrePersist
     public void prePersist() {
         createdAt = OffsetDateTime.now();
     }
+
+
 }
