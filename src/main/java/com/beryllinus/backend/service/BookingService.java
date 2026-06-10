@@ -6,16 +6,18 @@ import com.beryllinus.backend.dto.response.BookingPrecheckResponse;
 import com.beryllinus.backend.dto.response.BookingResponse;
 import com.beryllinus.backend.dto.response.PriceResponse;
 import com.beryllinus.backend.dto.response.RoomAvailabilityResponse;
+import com.beryllinus.backend.enumuration.AggregateType;
 import com.beryllinus.backend.enumuration.BookingStatus;
 import com.beryllinus.backend.enumuration.Currency;
+import com.beryllinus.backend.enumuration.EventType;
 import com.beryllinus.backend.exceptions.BookingException;
 import com.beryllinus.backend.mapper.BookingMapper;
 import com.beryllinus.backend.model.Booking;
+import com.beryllinus.backend.model.OutboxEvent;
 import com.beryllinus.backend.model.room.RoomClass;
 import com.beryllinus.backend.model.room.RoomSetting;
 import com.beryllinus.backend.repository.BookingRepository;
 import com.beryllinus.backend.repository.RoomSettingRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ public class BookingService {
     private final RoomSettingRepository roomSettingRepository;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private final OutboxEventService outboxEventService;
 
 
     public BookingPrecheckResponse getPreCheckBooking(
@@ -296,6 +299,20 @@ public class BookingService {
          * Persist booking.
          */
         booking = bookingRepository.save(booking);
+
+        // Add Message to Outbox to kafka to proceed
+        outboxEventService.addOutboxEvent(OutboxEvent.builder()
+                .aggregateType(AggregateType.BOOKING)
+                .aggregateId(booking.getId())
+                .eventType(EventType.TEMPORARY_BOOKING_CREATED)
+                .payload("""
+                        {
+                          "bookingId":"%s",
+                          "status":"TEMPORARY"
+                        }
+                        """.formatted(booking.getId()))
+                .published(false)
+                .build());
 
         /*
          * Convert entity to API response.
