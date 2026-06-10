@@ -41,7 +41,7 @@ class RoomSettingsServiceTest {
     private RoomSettingRepository roomSettingRepository;
 
     @InjectMocks
-    private RoomSettingsService roomSettingsService;
+    private RoomSettingService roomSettingService;
 
     @Test
     void shouldGenerateRoomSettingsForAllActiveRoomClasses() {
@@ -69,7 +69,7 @@ class RoomSettingsServiceTest {
                 .thenReturn(Collections.emptyList());
 
         List<RoomSetting> result =
-                roomSettingsService.generateRoomSettingList(targetDate);
+                roomSettingService.generateRoomSettingList(targetDate);
 
         assertEquals(2, result.size());
     }
@@ -84,7 +84,7 @@ class RoomSettingsServiceTest {
                 .thenReturn(Collections.emptyList());
 
         List<RoomSetting> result =
-                roomSettingsService.generateRoomSettingList(LocalDate.now());
+                roomSettingService.generateRoomSettingList(LocalDate.now());
 
         assertTrue(result.isEmpty());
     }
@@ -113,7 +113,7 @@ class RoomSettingsServiceTest {
                 .thenReturn(Collections.emptyList());
 
         RoomSetting result =
-                roomSettingsService.generateRoomSettings(roomClass, targetDate);
+                roomSettingService.generateRoomSettings(roomClass, targetDate);
 
         assertEquals(BigDecimal.valueOf(100),
                 result.getCalcPriceLocal());
@@ -150,7 +150,7 @@ class RoomSettingsServiceTest {
                 .thenReturn(Collections.emptyList());
 
         RoomSetting result =
-                roomSettingsService.generateRoomSettings(roomClass, targetDate);
+                roomSettingService.generateRoomSettings(roomClass, targetDate);
 
         assertEquals(BigDecimal.valueOf(150),
                 result.getCalcPriceLocal());
@@ -185,7 +185,7 @@ class RoomSettingsServiceTest {
                 .thenReturn(Optional.empty());
 
         RoomSetting result =
-                roomSettingsService.generateRoomSettings(roomClass, targetDate);
+                roomSettingService.generateRoomSettings(roomClass, targetDate);
 
         assertEquals(3, result.getAvailableRooms());
     }
@@ -224,7 +224,7 @@ class RoomSettingsServiceTest {
                 .thenReturn(Optional.of(inactiveConfig));
 
         RoomSetting result =
-                roomSettingsService.generateRoomSettings(roomClass, targetDate);
+                roomSettingService.generateRoomSettings(roomClass, targetDate);
 
         assertEquals(2, result.getAvailableRooms());
     }
@@ -251,7 +251,7 @@ class RoomSettingsServiceTest {
         when(roomSettingRepository.saveAll(anyList()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        roomSettingsService.generateAndPersistRoomSettingList(targetDate);
+        roomSettingService.generateAndPersistRoomSettingList(targetDate);
 
         verify(roomSettingRepository)
                 .saveAll(anyList());

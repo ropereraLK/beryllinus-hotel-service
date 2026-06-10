@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RoomSettingsBatchService {
+public class RoomSettingBatchService {
 
-    private final RoomSettingsService roomSettingsService;
+    private final RoomSettingService roomSettingService;
     private final Clock clock;
 
-    public RoomSettingsBatchService(RoomSettingsService roomSettingsService, Clock clock) {
-        this.roomSettingsService = roomSettingsService;
+    public RoomSettingBatchService(RoomSettingService roomSettingService, Clock clock) {
+        this.roomSettingService = roomSettingService;
         this.clock = clock;
     }
 
@@ -35,7 +35,7 @@ public class RoomSettingsBatchService {
         LocalDate targetDate = today.plusYears(1);
 
         roomSettings.addAll(
-                roomSettingsService.generateAndPersistRoomSettingList(targetDate)
+                roomSettingService.generateAndPersistRoomSettingList(targetDate)
         );
 
         // Feb 28 before a leap year: also generate Feb 29
@@ -44,7 +44,7 @@ public class RoomSettingsBatchService {
                 && targetDate.isLeapYear()) {
 
             roomSettings.addAll(
-                    roomSettingsService.generateAndPersistRoomSettingList(
+                    roomSettingService.generateAndPersistRoomSettingList(
                             targetDate.plusDays(1)
                     )
             );
@@ -55,7 +55,7 @@ public class RoomSettingsBatchService {
 
 
     private List<RoomSetting> generateAndPersistRoomSettingList(final LocalDate date) {
-        return roomSettingsService.generateAndPersistRoomSettingList(date);
+        return roomSettingService.generateAndPersistRoomSettingList(date);
 
     }
 }

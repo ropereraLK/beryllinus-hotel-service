@@ -15,14 +15,14 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
-public class RoomSettingsService {
+public class RoomSettingService {
 
     private final RoomService roomService;
     private final RoomClassConfigRepository roomClassConfigRepository;
     private final RoomClassRepository roomClassRepository;
     private final RoomSettingRepository roomSettingRepository;
 
-    public RoomSettingsService(
+    public RoomSettingService(
             RoomClassConfigRepository roomClassConfigRepository,
             RoomService roomService,
             RoomClassRepository roomClassRepository,

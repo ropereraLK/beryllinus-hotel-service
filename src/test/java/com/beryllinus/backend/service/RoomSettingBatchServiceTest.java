@@ -15,12 +15,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RoomSettingsBatchServiceTest {
+class RoomSettingBatchServiceTest {
 
     @Mock
-    private RoomSettingsService roomSettingsService;
+    private RoomSettingService roomSettingService;
 
-    private RoomSettingsBatchService service;
+    private RoomSettingBatchService service;
 
     @Test
     void shouldGenerateSettingsForNextYearOnNormalDay() {
@@ -43,17 +43,17 @@ class RoomSettingsBatchServiceTest {
                 ZoneOffset.UTC
         );
 
-        service = new RoomSettingsBatchService(
-                roomSettingsService,
+        service = new RoomSettingBatchService(
+                roomSettingService,
                 fixedClock
         );
 
-        when(roomSettingsService.generateAndPersistRoomSettingList(any()))
+        when(roomSettingService.generateAndPersistRoomSettingList(any()))
                 .thenReturn(Collections.emptyList());
 
         service.createRoomSettingsAsBatch();
 
-        verify(roomSettingsService)
+        verify(roomSettingService)
                 .generateAndPersistRoomSettingList(
                         LocalDate.of(2027, 6, 9)
                 );
@@ -81,14 +81,14 @@ class RoomSettingsBatchServiceTest {
                 ZoneOffset.UTC
         );
 
-        service = new RoomSettingsBatchService(
-                roomSettingsService,
+        service = new RoomSettingBatchService(
+                roomSettingService,
                 fixedClock
         );
 
         service.createRoomSettingsAsBatch();
 
-        verifyNoInteractions(roomSettingsService);
+        verifyNoInteractions(roomSettingService);
     }
 
     @Test
@@ -115,27 +115,27 @@ class RoomSettingsBatchServiceTest {
                 ZoneOffset.UTC
         );
 
-        service = new RoomSettingsBatchService(
-                roomSettingsService,
+        service = new RoomSettingBatchService(
+                roomSettingService,
                 fixedClock
         );
 
-        when(roomSettingsService.generateAndPersistRoomSettingList(any()))
+        when(roomSettingService.generateAndPersistRoomSettingList(any()))
                 .thenReturn(Collections.emptyList());
 
         service.createRoomSettingsAsBatch();
 
-        verify(roomSettingsService)
+        verify(roomSettingService)
                 .generateAndPersistRoomSettingList(
                         LocalDate.of(2028, 2, 28)
                 );
 
-        verify(roomSettingsService)
+        verify(roomSettingService)
                 .generateAndPersistRoomSettingList(
                         LocalDate.of(2028, 2, 29)
                 );
 
-        verify(roomSettingsService, times(2))
+        verify(roomSettingService, times(2))
                 .generateAndPersistRoomSettingList(any());
     }
 
@@ -162,22 +162,22 @@ class RoomSettingsBatchServiceTest {
                 ZoneOffset.UTC
         );
 
-        service = new RoomSettingsBatchService(
-                roomSettingsService,
+        service = new RoomSettingBatchService(
+                roomSettingService,
                 fixedClock
         );
 
-        when(roomSettingsService.generateAndPersistRoomSettingList(any()))
+        when(roomSettingService.generateAndPersistRoomSettingList(any()))
                 .thenReturn(Collections.emptyList());
 
         service.createRoomSettingsAsBatch();
 
-        verify(roomSettingsService)
+        verify(roomSettingService)
                 .generateAndPersistRoomSettingList(
                         LocalDate.of(2027, 2, 28)
                 );
 
-        verify(roomSettingsService, times(1))
+        verify(roomSettingService, times(1))
                 .generateAndPersistRoomSettingList(any());
     }
 }

@@ -2,7 +2,7 @@ package com.beryllinus.backend.contoller;
 
 import com.beryllinus.backend.model.room.RoomSetting;
 import com.beryllinus.backend.enumuration.RoomClassType;
-import com.beryllinus.backend.service.RoomSettingsService;
+import com.beryllinus.backend.service.RoomSettingService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ import java.util.List;
 @RequestMapping("/api/v1/room-settings")
 public class RoomSettingController {
 
-    private final RoomSettingsService roomSettingsService;
+    private final RoomSettingService roomSettingService;
 
     public RoomSettingController(
-            RoomSettingsService roomSettingsService
+            RoomSettingService roomSettingService
     ) {
-        this.roomSettingsService = roomSettingsService;
+        this.roomSettingService = roomSettingService;
     }
 
     /**
@@ -36,7 +36,7 @@ public class RoomSettingController {
     ) {
 
         return ResponseEntity.ok(
-                roomSettingsService.getByDate(date)
+                roomSettingService.getByDate(date)
         );
     }
 
@@ -58,7 +58,7 @@ public class RoomSettingController {
     ) {
 
         return ResponseEntity.ok(
-                roomSettingsService.getByDateRange(
+                roomSettingService.getByDateRange(
                         startDate,
                         endDate
                 )
@@ -81,7 +81,7 @@ public class RoomSettingController {
     ) {
 
         return ResponseEntity.ok(
-                roomSettingsService.getByRoomClassAndDate(
+                roomSettingService.getByRoomClassAndDate(
                         roomClass,
                         date
                 )
@@ -108,7 +108,7 @@ public class RoomSettingController {
     ) {
 
         return ResponseEntity.ok(
-                roomSettingsService.getByRoomClassAndDateRange(
+                roomSettingService.getByRoomClassAndDateRange(
                         roomClass,
                         startDate,
                         endDate
